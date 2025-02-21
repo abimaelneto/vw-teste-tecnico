@@ -1,0 +1,9 @@
+{
+    "bcrypt": {
+        "spec": "bcrypt",
+        "module": "bcrypt",
+        "subpath": "",
+        "builtin": false,
+        "known": false
+    }
+}

@@ -1,0 +1,249 @@
+0 verbose cli /usr/local/bin/node /usr/local/bin/npm
+1 info using npm@10.8.2
+2 info using node@v20.18.3
+3 silly config load:file:/usr/local/lib/node_modules/npm/npmrc
+4 silly config load:file:/data/.npmrc
+5 silly config load:file:/usr/src/node-red/.npmrc
+6 silly config load:file:/usr/local/etc/npmrc
+7 verbose title npm install uuid
+8 verbose argv "install" "--omit" "dev" "--engine-strict" "uuid"
+9 verbose logfile logs-max:10 dir:/data/.npm/_logs/2025-02-21T04_20_46_787Z-
+10 verbose logfile /data/.npm/_logs/2025-02-21T04_20_46_787Z-debug-0.log
+11 silly packumentCache heap:2197815296 maxSize:549453824 maxEntrySize:274726912
+12 silly logfile done cleaning log files
+13 silly idealTree buildDeps
+14 silly fetch manifest uuid@*
+15 silly packumentCache full:https://registry.npmjs.org/uuid cache-miss
+16 http fetch GET 200 https://registry.npmjs.org/uuid 309ms (cache updated)
+17 silly packumentCache full:https://registry.npmjs.org/uuid set size:undefined disposed:false
+18 silly placeDep ROOT uuid@11.1.0 REPLACE for: node-red-project@0.0.1 want: *
+19 silly fetch manifest uuid@^3.3.2
+20 silly packumentCache full:https://registry.npmjs.org/uuid cache-miss
+21 http fetch GET 200 https://registry.npmjs.org/uuid 9ms (cache hit)
+22 silly packumentCache full:https://registry.npmjs.org/uuid set size:215972 disposed:false
+23 silly placeDep node_modules/request uuid@3.4.0 OK for: request@2.88.2 want: ^3.3.2
+24 silly reify mark retired [ '/data/node_modules/uuid', '/data/node_modules/.bin/uuid' ]
+25 silly reify moves {
+25 silly reify   '/data/node_modules/uuid': '/data/node_modules/.uuid-4ltFvtl7',
+25 silly reify   '/data/node_modules/.bin/uuid': '/data/node_modules/.bin/.uuid-AirT9FyH'
+25 silly reify }
+26 silly audit bulk request {
+26 silly audit   '@mapbox/node-pre-gyp': [ '1.0.11' ],
+26 silly audit   semver: [ '7.7.1', '6.3.1', '5.7.2' ],
+26 silly audit   abbrev: [ '1.1.1' ],
+26 silly audit   'agent-base': [ '6.0.2' ],
+26 silly audit   ajv: [ '6.12.6' ],
+26 silly audit   'ansi-regex': [ '5.0.1' ],
+26 silly audit   aproba: [ '2.0.0' ],
+26 silly audit   'are-we-there-yet': [ '2.0.0' ],
+26 silly audit   asn1: [ '0.2.6' ],
+26 silly audit   'asn1.js': [ '4.10.1' ],
+26 silly audit   'assert-plus': [ '1.0.0' ],
+26 silly audit   asynckit: [ '0.4.0' ],
+26 silly audit   'aws-sign2': [ '0.7.0' ],
+26 silly audit   aws4: [ '1.13.2' ],
+26 silly audit   'balanced-match': [ '1.0.2' ],
+26 silly audit   base64url: [ '2.0.0' ],
+26 silly audit   bcrypt: [ '5.1.1' ],
+26 silly audit   'bcrypt-pbkdf': [ '1.0.2' ],
+26 silly audit   bcryptjs: [ '2.4.3' ],
+26 silly audit   'bn.js': [ '4.12.1' ],
+26 silly audit   'brace-expansion': [ '1.1.11' ],
+26 silly audit   'buffer-equal-constant-time': [ '1.0.1' ],
+26 silly audit   caseless: [ '0.12.0' ],
+26 silly audit   chownr: [ '2.0.0' ],
+26 silly audit   'color-support': [ '1.1.3' ],
+26 silly audit   'combined-stream': [ '1.0.8' ],
+26 silly audit   'concat-map': [ '0.0.1' ],
+26 silly audit   'console-control-strings': [ '1.1.0' ],
+26 silly audit   'core-util-is': [ '1.0.2' ],
+26 silly audit   dashdash: [ '1.14.1' ],
+26 silly audit   debug: [ '4.4.0' ],
+26 silly audit   'delayed-stream': [ '1.0.0' ],
+26 silly audit   delegates: [ '1.0.0' ],
+26 silly audit   'detect-libc': [ '2.0.3' ],
+26 silly audit   'ecc-jsbn': [ '0.1.2' ],
+26 silly audit   'ecdsa-sig-formatter': [ '1.0.11' ],
+26 silly audit   'emoji-regex': [ '8.0.0' ],
+26 silly audit   extend: [ '3.0.2' ],
+26 silly audit   extsprintf: [ '1.3.0' ],
+26 silly audit   'fast-deep-equal': [ '3.1.3' ],
+26 silly audit   'fast-json-stable-stringify': [ '2.1.0' ],
+26 silly audit   'forever-agent': [ '0.6.1' ],
+26 silly audit   'form-data': [ '2.3.3' ],
+26 silly audit   'fs-minipass': [ '2.1.0' ],
+26 silly audit   minipass: [ '3.3.6', '5.0.0' ],
+26 silly audit   'fs.realpath': [ '1.0.0' ],
+26 silly audit   gauge: [ '3.0.2' ],
+26 silly audit   getpass: [ '0.1.7' ],
+26 silly audit   glob: [ '7.2.3' ],
+26 silly audit   'har-schema': [ '2.0.0' ],
+26 silly audit   'har-validator': [ '5.1.5' ],
+26 silly audit   'has-unicode': [ '2.0.1' ],
+26 silly audit   'http-signature': [ '1.2.0' ],
+26 silly audit   'https-proxy-agent': [ '5.0.1' ],
+26 silly audit   inflight: [ '1.0.6' ],
+26 silly audit   inherits: [ '2.0.4' ],
+26 silly audit   'is-fullwidth-code-point': [ '3.0.0' ],
+26 silly audit   'is-typedarray': [ '1.0.0' ],
+26 silly audit   isstream: [ '0.1.2' ],
+26 silly audit   jsbn: [ '0.1.1' ],
+26 silly audit   'json-schema': [ '0.4.0' ],
+26 silly audit   'json-schema-traverse': [ '0.4.1' ],
+26 silly audit   'json-stringify-safe': [ '5.0.1' ],
+26 silly audit   jsonwebtoken: [ '8.5.1' ],
+26 silly audit   jsprim: [ '1.4.2' ],
+26 silly audit   jwa: [ '1.4.1' ],
+26 silly audit   jws: [ '3.2.2' ],
+26 silly audit   lodash: [ '4.17.21' ],
+26 silly audit   'lodash.includes': [ '4.3.0' ],
+26 silly audit   'lodash.isboolean': [ '3.0.3' ],
+26 silly audit   'lodash.isinteger': [ '4.0.4' ],
+26 silly audit   'lodash.isnumber': [ '3.0.3' ],
+26 silly audit   'lodash.isplainobject': [ '4.0.6' ],
+26 silly audit   'lodash.isstring': [ '4.0.1' ],
+26 silly audit   'lodash.once': [ '4.1.1' ],
+26 silly audit   'make-dir': [ '3.1.0' ],
+26 silly audit   'mime-db': [ '1.52.0' ],
+26 silly audit   'mime-types': [ '2.1.35' ],
+26 silly audit   'minimalistic-assert': [ '1.0.1' ],
+26 silly audit   minimatch: [ '3.1.2' ],
+26 silly audit   minizlib: [ '2.1.2' ],
+26 silly audit   mkdirp: [ '1.0.4' ],
+26 silly audit   ms: [ '2.1.3' ],
+26 silly audit   'node-addon-api': [ '5.1.0' ],
+26 silly audit   'node-fetch': [ '2.7.0' ],
+26 silly audit   'node-jwk': [ '0.1.0' ],
+26 silly audit   'node-red-contrib-bcrypt': [ '0.1.6' ],
+26 silly audit   'node-red-contrib-jwt': [ '0.1.0' ],
+26 silly audit   'node-red-contrib-uuid': [ '0.0.4' ],
+26 silly audit   uuid: [ '3.2.1', '11.1.0', '3.4.0' ],
+26 silly audit   nopt: [ '5.0.0' ],
+26 silly audit   npmlog: [ '5.0.1' ],
+26 silly audit   'oauth-sign': [ '0.9.0' ],
+26 silly audit   'object-assign': [ '4.1.1' ],
+26 silly audit   once: [ '1.4.0' ],
+26 silly audit   'path-is-absolute': [ '1.0.1' ],
+26 silly audit   'performance-now': [ '2.1.0' ],
+26 silly audit   psl: [ '1.15.0' ],
+26 silly audit   punycode: [ '2.3.1' ],
+26 silly audit   qs: [ '6.5.3' ],
+26 silly audit   'readable-stream': [ '3.6.2' ],
+26 silly audit   request: [ '2.88.2' ],
+26 silly audit   rimraf: [ '3.0.2' ],
+26 silly audit   'safe-buffer': [ '5.2.1' ],
+26 silly audit   'safer-buffer': [ '2.1.2' ],
+26 silly audit   'set-blocking': [ '2.0.0' ],
+26 silly audit   'signal-exit': [ '3.0.7' ],
+26 silly audit   sshpk: [ '1.18.0' ],
+26 silly audit   string_decoder: [ '1.3.0' ],
+26 silly audit   'string-width': [ '4.2.3' ],
+26 silly audit   'strip-ansi': [ '6.0.1' ],
+26 silly audit   tar: [ '6.2.1' ],
+26 silly audit   'tough-cookie': [ '2.5.0' ],
+26 silly audit   tr46: [ '0.0.3' ],
+26 silly audit   'tunnel-agent': [ '0.6.0' ],
+26 silly audit   tweetnacl: [ '0.14.5' ],
+26 silly audit   'uri-js': [ '4.4.1' ],
+26 silly audit   'util-deprecate': [ '1.0.2' ],
+26 silly audit   verror: [ '1.10.0' ],
+26 silly audit   'webidl-conversions': [ '3.0.1' ],
+26 silly audit   'whatwg-url': [ '5.0.0' ],
+26 silly audit   'wide-align': [ '1.1.5' ],
+26 silly audit   wrappy: [ '1.0.2' ],
+26 silly audit   yallist: [ '4.0.0' ]
+26 silly audit }
+27 silly tarball no local data for uuid@https://registry.npmjs.org/uuid/-/uuid-11.1.0.tgz. Extracting by manifest.
+28 warn deprecated uuid@3.4.0: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+29 http fetch POST 200 https://registry.npmjs.org/-/npm/v1/security/advisories/bulk 198ms
+30 silly audit report {
+30 silly audit report   base64url: [
+30 silly audit report     {
+30 silly audit report       id: 1091792,
+30 silly audit report       url: 'https://github.com/advisories/GHSA-rvg8-pwq2-xj7q',
+30 silly audit report       title: 'Out-of-bounds Read in base64url',
+30 silly audit report       severity: 'moderate',
+30 silly audit report       vulnerable_versions: '<3.0.0',
+30 silly audit report       cwe: [Array],
+30 silly audit report       cvss: [Object]
+30 silly audit report     }
+30 silly audit report   ],
+30 silly audit report   jsonwebtoken: [
+30 silly audit report     {
+30 silly audit report       id: 1102458,
+30 silly audit report       url: 'https://github.com/advisories/GHSA-qwph-4952-7xr6',
+30 silly audit report       title: 'jsonwebtoken vulnerable to signature validation bypass due to insecure default algorithm in jwt.verify()',
+30 silly audit report       severity: 'moderate',
+30 silly audit report       vulnerable_versions: '<9.0.0',
+30 silly audit report       cwe: [Array],
+30 silly audit report       cvss: [Object]
+30 silly audit report     },
+30 silly audit report     {
+30 silly audit report       id: 1097690,
+30 silly audit report       url: 'https://github.com/advisories/GHSA-8cf7-32gw-wr33',
+30 silly audit report       title: 'jsonwebtoken unrestricted key type could lead to legacy keys usage ',
+30 silly audit report       severity: 'high',
+30 silly audit report       vulnerable_versions: '<=8.5.1',
+30 silly audit report       cwe: [Array],
+30 silly audit report       cvss: [Object]
+30 silly audit report     },
+30 silly audit report     {
+30 silly audit report       id: 1097694,
+30 silly audit report       url: 'https://github.com/advisories/GHSA-hjrf-2m68-5959',
+30 silly audit report       title: "jsonwebtoken's insecure implementation of key retrieval function could lead to Forgeable Public/Private Tokens from RSA to HMAC",
+30 silly audit report       severity: 'moderate',
+30 silly audit report       vulnerable_versions: '<=8.5.1',
+30 silly audit report       cwe: [Array],
+30 silly audit report       cvss: [Object]
+30 silly audit report     }
+30 silly audit report   ],
+30 silly audit report   request: [
+30 silly audit report     {
+30 silly audit report       id: 1096727,
+30 silly audit report       url: 'https://github.com/advisories/GHSA-p8p7-x288-28g6',
+30 silly audit report       title: 'Server-Side Request Forgery in Request',
+30 silly audit report       severity: 'moderate',
+30 silly audit report       vulnerable_versions: '<=2.88.2',
+30 silly audit report       cwe: [Array],
+30 silly audit report       cvss: [Object]
+30 silly audit report     }
+30 silly audit report   ],
+30 silly audit report   'tough-cookie': [
+30 silly audit report     {
+30 silly audit report       id: 1097682,
+30 silly audit report       url: 'https://github.com/advisories/GHSA-72xf-g2v4-qvf3',
+30 silly audit report       title: 'tough-cookie Prototype Pollution vulnerability',
+30 silly audit report       severity: 'moderate',
+30 silly audit report       vulnerable_versions: '<4.1.3',
+30 silly audit report       cwe: [Array],
+30 silly audit report       cvss: [Object]
+30 silly audit report     }
+30 silly audit report   ]
+30 silly audit report }
+31 silly packumentCache corgi:https://registry.npmjs.org/base64url cache-miss
+32 silly packumentCache corgi:https://registry.npmjs.org/jsonwebtoken cache-miss
+33 silly packumentCache corgi:https://registry.npmjs.org/request cache-miss
+34 silly packumentCache corgi:https://registry.npmjs.org/tough-cookie cache-miss
+35 http fetch GET 200 https://registry.npmjs.org/base64url 21ms (cache hit)
+36 silly packumentCache corgi:https://registry.npmjs.org/base64url set size:12907 disposed:false
+37 http fetch GET 200 https://registry.npmjs.org/jsonwebtoken 22ms (cache hit)
+38 silly packumentCache corgi:https://registry.npmjs.org/jsonwebtoken set size:66386 disposed:false
+39 http fetch GET 200 https://registry.npmjs.org/request 23ms (cache hit)
+40 silly packumentCache corgi:https://registry.npmjs.org/request set size:129997 disposed:false
+41 http fetch GET 200 https://registry.npmjs.org/tough-cookie 25ms (cache hit)
+42 silly packumentCache corgi:https://registry.npmjs.org/tough-cookie set size:49265 disposed:false
+43 silly packumentCache corgi:https://registry.npmjs.org/node-jwk cache-miss
+44 http fetch GET 200 https://registry.npmjs.org/node-jwk 8ms (cache hit)
+45 silly packumentCache corgi:https://registry.npmjs.org/node-jwk set size:843 disposed:false
+46 silly packumentCache corgi:https://registry.npmjs.org/node-red-contrib-jwt cache-miss
+47 http fetch GET 200 https://registry.npmjs.org/node-red-contrib-jwt 6ms (cache hit)
+48 silly packumentCache corgi:https://registry.npmjs.org/node-red-contrib-jwt set size:9088 disposed:false
+49 http fetch GET 200 https://registry.npmjs.org/uuid/-/uuid-11.1.0.tgz 250ms (cache miss)
+50 silly CHANGE node_modules/uuid
+51 silly ADD node_modules/request/node_modules/uuid
+52 verbose cwd /data
+53 verbose os Linux 5.15.167.4-microsoft-standard-WSL2
+54 verbose node v20.18.3
+55 verbose npm  v10.8.2
+56 verbose exit 0
+57 info ok

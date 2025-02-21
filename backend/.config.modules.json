@@ -1,0 +1,16 @@
+{
+    "bcrypt": {
+        "spec": "bcrypt",
+        "module": "bcrypt",
+        "subpath": "",
+        "builtin": false,
+        "known": false
+    },
+    "uuid": {
+        "spec": "uuid",
+        "module": "uuid",
+        "subpath": "",
+        "builtin": false,
+        "known": false
+    }
+}

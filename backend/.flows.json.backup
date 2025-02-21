@@ -1,0 +1,1134 @@
+[
+    {
+        "id": "092c9fcb141d08fc",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "7030f3437d2a3196",
+        "type": "http in",
+        "z": "092c9fcb141d08fc",
+        "name": "Login",
+        "url": "/auth/login",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 550,
+        "y": 420,
+        "wires": [
+            [
+                "6833e0135e02260a"
+            ]
+        ]
+    },
+    {
+        "id": "6833e0135e02260a",
+        "type": "function",
+        "z": "092c9fcb141d08fc",
+        "name": "Login Function",
+        "func": "let users = global.get(\"users\") || [];\nlet { name, password } = msg.payload;\n\n// Debug log\nnode.warn(\"Login attempt for: \" + name);\nnode.warn(\"Available users: \" + JSON.stringify(users.map(u => ({ name: u.name }))));\n\nlet user = users.find(u => u.name === name);\n\nif (!user) {\n    msg.statusCode = 401;\n    msg.payload = { error: \"Invalid credentials\" };\n    // Wire directly to HTTP response when user not found\n    return [null, msg];\n}\n\n// Store the found user in msg for later use\nmsg.user = {\n    uuid: user.uuid,\n    name: user.name,\n    isRoot: user.isRoot,\n    isActived: user.isActived,\n    creationDate: user.creationDate,\n    updatedDate: user.updatedDate\n};\n\n// Set up bcrypt comparison\nmsg.password = password;\nmsg.hash = user.password;\n\n// Continue to bcrypt verification\nreturn [msg, null];\n",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 770,
+        "y": 420,
+        "wires": [
+            [
+                "5ad5f241a0d4c035"
+            ],
+            [
+                "ce8c0869ad977def"
+            ]
+        ]
+    },
+    {
+        "id": "ce8c0869ad977def",
+        "type": "http response",
+        "z": "092c9fcb141d08fc",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1610,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "3059767c76e510d1",
+        "type": "http in",
+        "z": "092c9fcb141d08fc",
+        "name": "Upload Images",
+        "url": "/upload",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 570,
+        "y": 680,
+        "wires": [
+            [
+                "79303085543e6306"
+            ]
+        ]
+    },
+    {
+        "id": "79303085543e6306",
+        "type": "file",
+        "z": "092c9fcb141d08fc",
+        "name": "",
+        "filename": "",
+        "filenameType": "str",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 740,
+        "y": 680,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "cdd80ad803849407",
+        "type": "inject",
+        "z": "092c9fcb141d08fc",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{     \"name\": \"admin\",     \"password\": \"admin123\" }",
+        "payloadType": "json",
+        "x": 390,
+        "y": 500,
+        "wires": [
+            [
+                "6833e0135e02260a"
+            ]
+        ]
+    },
+    {
+        "id": "5ad5f241a0d4c035",
+        "type": "bcrypt",
+        "z": "092c9fcb141d08fc",
+        "name": "",
+        "action": "verify",
+        "field": "password",
+        "hash": "hash",
+        "target": "payload",
+        "assignment": "replace",
+        "match": "payload",
+        "outputs": 1,
+        "rounds": 10,
+        "x": 940,
+        "y": 420,
+        "wires": [
+            [
+                "6eb3033f13bb5444"
+            ]
+        ]
+    },
+    {
+        "id": "c19d3a1df8c832a8",
+        "type": "jwt sign",
+        "z": "092c9fcb141d08fc",
+        "name": "",
+        "alg": "HS256",
+        "exp": 3600,
+        "jwkurl": "",
+        "jwkkid": "",
+        "secret": "abimael",
+        "key": "",
+        "signvar": "payload",
+        "storetoken": "token",
+        "x": 1260,
+        "y": 420,
+        "wires": [
+            [
+                "c66e42b2eb146f3c"
+            ]
+        ]
+    },
+    {
+        "id": "6eb3033f13bb5444",
+        "type": "function",
+        "z": "092c9fcb141d08fc",
+        "name": "function 1",
+        "func": "// Check if password comparison was successful\nif (!msg.payload) {\n    msg.statusCode = 401;\n    msg.payload = { error: \"Invalid credentials\" };\n    return msg;\n}\n\n// Prepare JWT payload\nmsg.payload = {\n    uuid: msg.user.uuid,\n    isRoot: msg.user.isRoot\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1100,
+        "y": 420,
+        "wires": [
+            [
+                "c19d3a1df8c832a8"
+            ]
+        ]
+    },
+    {
+        "id": "c66e42b2eb146f3c",
+        "type": "function",
+        "z": "092c9fcb141d08fc",
+        "name": "function 2",
+        "func": "// Format the final response\nmsg.statusCode = 200;\nmsg.payload = {\n    token: msg.token,\n    user: msg.user  // Using the user object we stored earlier\n};\n\n// Debug log\nnode.warn(\"Login successful for user: \" + msg.user.name);\nnode.warn(\"Response payload: \" + JSON.stringify(msg.payload));\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1420,
+        "y": 420,
+        "wires": [
+            [
+                "ce8c0869ad977def"
+            ]
+        ]
+    },
+    {
+        "id": "799f7c284053a3a3",
+        "type": "inject",
+        "z": "092c9fcb141d08fc",
+        "name": "Initialize on Deploy",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0.1",
+        "topic": "",
+        "x": 250,
+        "y": 780,
+        "wires": [
+            [
+                "340f8dc0d5823316"
+            ]
+        ]
+    },
+    {
+        "id": "689b1bda9e89233d",
+        "type": "debug",
+        "z": "092c9fcb141d08fc",
+        "name": "Initialization Debug",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "complete": "true",
+        "x": 890,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "f724a2748fd3bb08",
+        "type": "http in",
+        "z": "092c9fcb141d08fc",
+        "name": "List Vehicles",
+        "url": "/vehicles",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 530,
+        "y": 600,
+        "wires": [
+            [
+                "2b53e67f36648f6d"
+            ]
+        ]
+    },
+    {
+        "id": "427a423ef5cd331b",
+        "type": "http response",
+        "z": "092c9fcb141d08fc",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1150,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "74e652b35fa4e641",
+        "type": "jwt verify",
+        "z": "092c9fcb141d08fc",
+        "name": "",
+        "alg": [
+            "HS256"
+        ],
+        "jwkurl": "",
+        "secret": "",
+        "key": "",
+        "signvar": "payload",
+        "storetoken": "payload",
+        "x": 290,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "getColorsList",
+        "type": "http in",
+        "z": "092c9fcb141d08fc",
+        "name": "GET Colors",
+        "url": "/colors",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 950,
+        "y": 840,
+        "wires": [
+            [
+                "b3be3a513c8afc7c"
+            ]
+        ]
+    },
+    {
+        "id": "getColorsFromContext",
+        "type": "function",
+        "z": "092c9fcb141d08fc",
+        "name": "Get Colors from Context",
+        "func": "// Obtém as cores do contexto global\nconst colors = global.get('colors');\n\n// Prepara a resposta\nmsg.payload = colors || [];\nmsg.statusCode = 200;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1370,
+        "y": 840,
+        "wires": [
+            [
+                "colorsResponse"
+            ]
+        ]
+    },
+    {
+        "id": "colorsResponse",
+        "type": "http response",
+        "z": "092c9fcb141d08fc",
+        "name": "Colors Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 1610,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "getModelsList",
+        "type": "http in",
+        "z": "092c9fcb141d08fc",
+        "name": "GET Models",
+        "url": "/models",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 950,
+        "y": 900,
+        "wires": [
+            [
+                "78616f209f20d8bc"
+            ]
+        ]
+    },
+    {
+        "id": "getModelsFromContext",
+        "type": "function",
+        "z": "092c9fcb141d08fc",
+        "name": "Get Models from Context",
+        "func": "// Obtém os modelos do contexto global\nconst models = global.get('models');\n\n// Prepara a resposta\nmsg.payload = models || [];\nmsg.statusCode = 200;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1370,
+        "y": 900,
+        "wires": [
+            [
+                "modelsResponse"
+            ]
+        ]
+    },
+    {
+        "id": "modelsResponse",
+        "type": "http response",
+        "z": "092c9fcb141d08fc",
+        "name": "Models Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 1630,
+        "y": 900,
+        "wires": []
+    },
+    {
+        "id": "340f8dc0d5823316",
+        "type": "function",
+        "z": "092c9fcb141d08fc",
+        "name": "Initialize Global Context",
+        "func": "// Initialize logs array if not exists\nif (!global.get('logs')) {\n    global.set('logs', []);\n    node.warn('Logs initialized');\n}\n\n// Check if users already exist\nlet users = global.get(\"users\");\n\nif (!users || users.length === 0) {\n    // Initialize with default admin user\n    users = [{\n        uuid: \"550e8400-e29b-41d4-a716-446655440000\",\n        name: \"admin\",\n        password: \"$2b$10$rPiEBc4qKqTyKiriXdPzuOYw5CwXY2bYN6XWgr.pGP3kd3BGcHhK6\",\n        isRoot: true,\n        isActived: true,\n        creationDate: new Date().toISOString(),\n        updatedDate: new Date().toISOString()\n    }];\n    \n    global.set(\"users\", users);\n    node.warn(\"Users initialized with admin user\");\n}\n\n// Initialize colors if not exists\nlet colors = global.get(\"colors\");\nif (!colors || colors.length === 0) {\n    colors = [\n        { uuid: \"c1\", colorName: \"Preto\" },\n        { uuid: \"c2\", colorName: \"Branco\" },\n        { uuid: \"c3\", colorName: \"Vermelho\" },\n        { uuid: \"c4\", colorName: \"Cinza\" },\n        { uuid: \"c5\", colorName: \"Azul\" },\n    ];\n    global.set(\"colors\", colors);\n    node.warn(\"Colors initialized\");\n}\n\n// Initialize models if not exists\nlet models = global.get(\"models\");\nif (!models || models.length === 0) {\n    models = [\n        { uuid: \"m1\", modelName: \"T-Cross\" },\n        { uuid: \"m2\", modelName: \"Nivus\" },\n        { uuid: \"m3\", modelName: \"Polo\" },\n        { uuid: \"m4\", modelName: \"Virtus\" },\n        { uuid: \"m5\", modelName: \"Saveiro\" },\n        { uuid: \"m6\", modelName: \"Track\" },\n    ];\n    global.set(\"models\", models);\n    node.warn(\"Models initialized\");\n}\n\n// Initialize vehicles with test data\nlet vehicles = global.get(\"vehicles\");\nif (!vehicles || vehicles.length === 0) {\n    const models = global.get('models');\n    const colors = global.get('colors');\n    \n    // Função helper para criar veículos\n    function createVehicle(model, color, year, creationOffset) {\n        return {\n            uuid: RED.util.generateId(),\n            creationUserName: \"admin\",\n            updatedUserName: \"admin\",\n            creationDate: new Date(Date.now() - creationOffset).toISOString(),\n            updatedDate: new Date(Date.now() - creationOffset).toISOString(),\n            model: models.find(m => m.modelName === model),\n            color: colors.find(c => c.colorName === color),\n            year: year,\n            imagePath: \"default-car.jpg\"\n        };\n    }\n\n    // Criar 30 veículos de teste com diferentes combinações\n    vehicles = [\n        createVehicle(\"T-Cross\", \"Preto\", 2024, 0),\n        createVehicle(\"Nivus\", \"Branco\", 2023, 86400000),\n        createVehicle(\"Polo\", \"Vermelho\", 2024, 172800000),\n        createVehicle(\"Virtus\", \"Azul\", 2023, 259200000),\n        createVehicle(\"Saveiro\", \"Cinza\", 2024, 345600000),\n        createVehicle(\"Track\", \"Preto\", 2023, 432000000),\n        createVehicle(\"T-Cross\", \"Branco\", 2024, 518400000),\n        createVehicle(\"Nivus\", \"Vermelho\", 2023, 604800000),\n        createVehicle(\"Polo\", \"Azul\", 2024, 691200000),\n        createVehicle(\"Virtus\", \"Cinza\", 2023, 777600000),\n        createVehicle(\"Saveiro\", \"Preto\", 2024, 864000000),\n        createVehicle(\"Track\", \"Branco\", 2023, 950400000),\n        createVehicle(\"T-Cross\", \"Vermelho\", 2024, 1036800000),\n        createVehicle(\"Nivus\", \"Azul\", 2023, 1123200000),\n        createVehicle(\"Polo\", \"Cinza\", 2024, 1209600000),\n        createVehicle(\"Virtus\", \"Preto\", 2023, 1296000000),\n        createVehicle(\"Saveiro\", \"Branco\", 2024, 1382400000),\n        createVehicle(\"Track\", \"Vermelho\", 2023, 1468800000),\n        createVehicle(\"T-Cross\", \"Azul\", 2024, 1555200000),\n        createVehicle(\"Nivus\", \"Cinza\", 2023, 1641600000),\n        createVehicle(\"Polo\", \"Preto\", 2024, 1728000000),\n        createVehicle(\"Virtus\", \"Branco\", 2023, 1814400000),\n        createVehicle(\"Saveiro\", \"Vermelho\", 2024, 1900800000),\n        createVehicle(\"Track\", \"Azul\", 2023, 1987200000),\n        createVehicle(\"T-Cross\", \"Cinza\", 2024, 2073600000),\n        createVehicle(\"Nivus\", \"Preto\", 2023, 2160000000),\n        createVehicle(\"Polo\", \"Branco\", 2024, 2246400000),\n        createVehicle(\"Virtus\", \"Vermelho\", 2023, 2332800000),\n        createVehicle(\"Saveiro\", \"Azul\", 2024, 2419200000),\n        createVehicle(\"Track\", \"Cinza\", 2023, 2505600000)\n    ];\n\n    global.set(\"vehicles\", vehicles);\n    node.warn(\"Vehicles initialized with 30 test vehicles\");\n}\n\nnode.warn(\"Current context state:\");\nnode.warn(\"Users: \" + JSON.stringify(users));\nnode.warn(\"Colors: \" + JSON.stringify(colors));\nnode.warn(\"Models: \" + JSON.stringify(models));\nnode.warn(\"Total vehicles: \" + vehicles.length);\nnode.warn(\"Distribution:\");\nnode.warn(\"Models: \" + JSON.stringify(vehicles.reduce((acc, v) => {\n    acc[v.model.modelName] = (acc[v.model.modelName] || 0) + 1;\n    return acc;\n}, {})));\nnode.warn(\"Colors: \" + JSON.stringify(vehicles.reduce((acc, v) => {\n    acc[v.color.colorName] = (acc[v.color.colorName] || 0) + 1;\n    return acc;\n}, {})));\nnode.warn(\"Years: \" + JSON.stringify(vehicles.reduce((acc, v) => {\n    acc[v.year] = (acc[v.year] || 0) + 1;\n    return acc;\n}, {})));\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 570,
+        "y": 800,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "createVehicle",
+        "type": "http in",
+        "z": "092c9fcb141d08fc",
+        "name": "Create Vehicle",
+        "url": "/vehicles",
+        "method": "post",
+        "upload": true,
+        "swaggerDoc": "",
+        "x": 1220,
+        "y": 1060,
+        "wires": [
+            [
+                "aea1d2cb993cf7aa"
+            ]
+        ]
+    },
+    {
+        "id": "serveImages",
+        "type": "http in",
+        "z": "092c9fcb141d08fc",
+        "name": "Serve Images",
+        "url": "/uploads/:filename",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 1210,
+        "y": 1180,
+        "wires": [
+            [
+                "0fdddd90df29c842"
+            ]
+        ]
+    },
+    {
+        "id": "imageResponse",
+        "type": "http response",
+        "z": "092c9fcb141d08fc",
+        "name": "Image Response",
+        "statusCode": "",
+        "headers": {
+            "Content-Type": "image/*"
+        },
+        "x": 1620,
+        "y": 1140,
+        "wires": []
+    },
+    {
+        "id": "2d36070cbb36d6fc",
+        "type": "function",
+        "z": "092c9fcb141d08fc",
+        "name": "Create Vehicle Function",
+        "func": "const vehicles = global.get(\"vehicles\") || [];\nconst models = global.get(\"models\") || [];\nconst colors = global.get(\"colors\") || [];\n\nif (!msg.req.files || !msg.req.files[0]) {\n    msg.statusCode = 400;\n    msg.payload = { error: \"Image file is required\" };\n    return msg;\n}\n\nconst formData = msg.req.body;\nconst file = msg.req.files[0];\n\n// Validar campos obrigatórios\nif (!formData.model || !formData.color || !formData.year) {\n    msg.statusCode = 400;\n    msg.payload = { error: \"Missing required fields\" };\n    return msg;\n}\n\n// Encontrar modelo e cor\nconst model = models.find(m => m.uuid === formData.model);\nconst color = colors.find(c => c.uuid === formData.color);\n\nif (!model || !color) {\n    msg.statusCode = 400;\n    msg.payload = { error: \"Invalid model or color\" };\n    return msg;\n}\n\n// Gerar nome único para o arquivo\nconst fileExt = file.originalname.split('.').pop();\n\nconst fileName = `${Date.now()}-${RED.util.generateId()}.${fileExt}`;\nconst filePath = `${fileName}`;  // Keep this as is for URL access\n\n// Update the image message\nmsg.image = {\n    payload: file.buffer,\n    filename: fileName  // Just the filename, the path is set in the Save Image node\n};\n\n\n// Criar novo veículo usando RED.util.generateId() do Node-RED\nconst newVehicle = {\n    uuid: RED.util.generateId(),\n    creationUserName: formData.creationUserName,\n    updatedUserName: formData.updatedUserName,\n    creationDate: new Date().toISOString(),\n    updatedDate: new Date().toISOString(),\n    model: model,\n    color: color,\n    year: parseInt(formData.year),\n    imagePath: filePath\n};\n\n// Salvar no contexto global\nvehicles.push(newVehicle);\nglobal.set(\"vehicles\", vehicles);\n\n// Preparar resposta\nmsg.statusCode = 201;\nmsg.payload = newVehicle;\n\nreturn [msg, msg.image];",
+        "outputs": 2,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1690,
+        "y": 1080,
+        "wires": [
+            [
+                "229c62383a1f5616"
+            ],
+            [
+                "06250e67d80e73f3"
+            ]
+        ]
+    },
+    {
+        "id": "229c62383a1f5616",
+        "type": "http response",
+        "z": "092c9fcb141d08fc",
+        "name": "Vehicle Response",
+        "statusCode": "",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "x": 1890,
+        "y": 1280,
+        "wires": []
+    },
+    {
+        "id": "06250e67d80e73f3",
+        "type": "file",
+        "z": "092c9fcb141d08fc",
+        "name": "Save Image",
+        "filename": "filename",
+        "filenameType": "msg",
+        "appendNewline": false,
+        "createDir": true,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 1930,
+        "y": 1120,
+        "wires": [
+            [
+                "7d4758f944015ab7"
+            ]
+        ]
+    },
+    {
+        "id": "0fdddd90df29c842",
+        "type": "file in",
+        "z": "092c9fcb141d08fc",
+        "name": "Read Image",
+        "filename": "req.params.filename",
+        "filenameType": "msg",
+        "format": "",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 1410,
+        "y": 1200,
+        "wires": [
+            [
+                "imageResponse"
+            ]
+        ]
+    },
+    {
+        "id": "7d4758f944015ab7",
+        "type": "debug",
+        "z": "092c9fcb141d08fc",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2070,
+        "y": 1040,
+        "wires": []
+    },
+    {
+        "id": "deleteVehicle",
+        "type": "http in",
+        "z": "092c9fcb141d08fc",
+        "name": "Delete Vehicle",
+        "url": "/vehicles/:uuid",
+        "method": "delete",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 1190,
+        "y": 1440,
+        "wires": [
+            [
+                "c9efe378a6ea8384"
+            ]
+        ]
+    },
+    {
+        "id": "deleteVehicleFunction",
+        "type": "function",
+        "z": "092c9fcb141d08fc",
+        "name": "Delete Vehicle Function",
+        "func": "const vehicles = global.get(\"vehicles\") || [];\nconst uuid = msg.req.params.uuid;\n\nconst vehicleIndex = vehicles.findIndex(v => v.uuid === uuid);\n\nif (vehicleIndex === -1) {\n    msg.statusCode = 404;\n    msg.payload = { error: \"Vehicle not found\" };\n    return msg;\n}\n\n// Get vehicle before removing it to delete its image\nconst vehicle = vehicles[vehicleIndex];\n\n// Remove vehicle from array\nvehicles.splice(vehicleIndex, 1);\nglobal.set(\"vehicles\", vehicles);\n\n// Prepare image deletion message\nlet deleteMsg = {\n    filename: vehicle.imagePath\n};\n\nmsg.statusCode = 200;\nmsg.payload = { message: \"Vehicle deleted successfully\" };\n\nreturn [msg, deleteMsg];",
+        "outputs": 2,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1660,
+        "y": 1440,
+        "wires": [
+            [
+                "logFunction",
+                "deleteVehicleResponse"
+            ],
+            [
+                "e79bb0abbfcb6c0e"
+            ]
+        ]
+    },
+    {
+        "id": "deleteVehicleResponse",
+        "type": "http response",
+        "z": "092c9fcb141d08fc",
+        "name": "Delete Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 1890,
+        "y": 1440,
+        "wires": []
+    },
+    {
+        "id": "e79bb0abbfcb6c0e",
+        "type": "function",
+        "z": "092c9fcb141d08fc",
+        "name": "Delete Image Function",
+        "func": "const fs = require('fs');\nconst path = require('path');\n\ntry {\n    const imagePath = msg.filename;\n    \n    if (fs.existsSync(imagePath)) {\n        fs.unlinkSync(imagePath);\n        msg.payload = { success: true, message: 'Image deleted successfully' };\n    } else {\n        msg.payload = { success: false, message: 'Image not found' };\n    }\n} catch (error) {\n    msg.payload = { success: false, error: error.message };\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1940,
+        "y": 1560,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "updateVehicleResponse",
+        "type": "http response",
+        "z": "092c9fcb141d08fc",
+        "name": "Update Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 1840,
+        "y": 1740,
+        "wires": []
+    },
+    {
+        "id": "saveUpdatedImage",
+        "type": "file",
+        "z": "092c9fcb141d08fc",
+        "name": "Save Updated Image",
+        "filename": "filename",
+        "filenameType": "msg",
+        "appendNewline": false,
+        "createDir": true,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 1840,
+        "y": 1800,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "3809dec0d6d2881c",
+        "type": "http in",
+        "z": "092c9fcb141d08fc",
+        "name": "Update Vehicle",
+        "url": "/vehicles/:uuid",
+        "method": "post",
+        "upload": true,
+        "swaggerDoc": "",
+        "x": 1100,
+        "y": 1640,
+        "wires": [
+            [
+                "jwtVerify"
+            ]
+        ]
+    },
+    {
+        "id": "updateVehicleFunction",
+        "type": "function",
+        "z": "092c9fcb141d08fc",
+        "name": "Update Vehicle Function",
+        "func": "const vehicles = global.get(\"vehicles\") || [];\nconst models = global.get(\"models\") || [];\nconst colors = global.get(\"colors\") || [];\n\nconst uuid = msg.req.params.uuid;\nconst formData = msg.req.body;\nconst file = msg.req.files?.[0];\n\n\n\n// Debug logs\nnode.warn(\"Files: \" + JSON.stringify(msg.req.files));\n\n// Find vehicle\nconst vehicleIndex = vehicles.findIndex(v => v.uuid === uuid);\nif (vehicleIndex === -1) {\n    msg.statusCode = 404;\n    msg.payload = { error: \"Vehicle not found\" };\n    return msg;\n}\n\n// Validar campos obrigatórios\nif (!formData.model || !formData.color || !formData.year) {\n    node.warn(\"Missing required fields\");\n    msg.statusCode = 400;\n    msg.payload = { error: \"Missing required fields\" };\n    return msg;\n}\n\n// Encontrar modelo e cor\nconst model = models.find(m => m.uuid === formData.model);\nconst color = colors.find(c => c.uuid === formData.color);\n\nif (!model || !color) {\n    msg.statusCode = 400;\n    msg.payload = { error: \"Invalid model or color\" };\n    return msg;\n}\n\n// Prepare image update if new file is provided\nlet imageMsg = null;\nlet imagePath = vehicles[vehicleIndex].imagePath;\n\nif (file) {\n    const fileExt = file.originalname.split('.').pop();\n    const fileName = `${Date.now()}-${RED.util.generateId()}.${fileExt}`;\n    imagePath = fileName;\n    \n    imageMsg = {\n        payload: file.buffer,\n        filename: fileName\n    };\n}\n\n// Update vehicle\nconst updatedVehicle = {\n    ...vehicles[vehicleIndex],\n    model,\n    color,\n    year: parseInt(formData.year),\n    updatedUserName: formData.updatedUserName,\n    updatedDate: new Date().toISOString(),\n    imagePath\n};\n\nvehicles[vehicleIndex] = updatedVehicle;\nglobal.set(\"vehicles\", vehicles);\n\nmsg.statusCode = 200;\nmsg.payload = updatedVehicle;\n\nreturn imageMsg ? [msg, imageMsg] : [msg, null];",
+        "outputs": 2,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1610,
+        "y": 1660,
+        "wires": [
+            [
+                "logFunction",
+                "updateVehicleResponse"
+            ],
+            [
+                "saveUpdatedImage"
+            ]
+        ]
+    },
+    {
+        "id": "createUser",
+        "type": "http in",
+        "z": "092c9fcb141d08fc",
+        "name": "Create User",
+        "url": "/users",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 1010,
+        "y": 1900,
+        "wires": [
+            [
+                "checkRootUser",
+                "6f11921673c7e17f",
+                "0f3379128610b884"
+            ]
+        ]
+    },
+    {
+        "id": "getUsers",
+        "type": "http in",
+        "z": "092c9fcb141d08fc",
+        "name": "Get Users",
+        "url": "/users",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 1060,
+        "y": 2300,
+        "wires": [
+            [
+                "authenticateGetUsers"
+            ]
+        ]
+    },
+    {
+        "id": "authenticateGetUsers",
+        "type": "jwt verify",
+        "z": "092c9fcb141d08fc",
+        "name": "",
+        "alg": [
+            "HS256"
+        ],
+        "jwkurl": "",
+        "secret": "abimael",
+        "key": "",
+        "signvar": "bearer",
+        "storetoken": "token",
+        "x": 1270,
+        "y": 2300,
+        "wires": [
+            [
+                "getUsersFunction"
+            ]
+        ]
+    },
+    {
+        "id": "getUsersFunction",
+        "type": "function",
+        "z": "092c9fcb141d08fc",
+        "name": "Get Users Function",
+        "func": "const users = global.get(\"users\") || [];\n\n// Remove sensitive information\nconst sanitizedUsers = users.map(user => {\n    const { password, ...userData } = user;\n    return userData;\n});\n\nmsg.payload = sanitizedUsers;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1480,
+        "y": 2300,
+        "wires": [
+            [
+                "getUsersResponse"
+            ]
+        ]
+    },
+    {
+        "id": "getUsersResponse",
+        "type": "http response",
+        "z": "092c9fcb141d08fc",
+        "name": "Users Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 1690,
+        "y": 2300,
+        "wires": []
+    },
+    {
+        "id": "6f11921673c7e17f",
+        "type": "function",
+        "z": "092c9fcb141d08fc",
+        "name": "Prepare User Data",
+        "func": "let users = global.get(\"users\") || [];\nlet { name, password, isActived, isRoot } = msg.payload;\n\n// Prepare o usuário sem hash (será feito pelo nó bcrypt)\nmsg.newUser = {\n    uuid: RED.util.generateId(),\n    creationDate: new Date().toISOString(),\n    updatedDate: new Date().toISOString(),\n    name,\n    isActived,\n    isRoot\n};\n\n// Passar a senha para o nó bcrypt\nmsg.password = password;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1220,
+        "y": 1900,
+        "wires": [
+            [
+                "5acbb3c48e423c70"
+            ]
+        ]
+    },
+    {
+        "id": "5acbb3c48e423c70",
+        "type": "bcrypt",
+        "z": "092c9fcb141d08fc",
+        "name": "Hash Password",
+        "action": "hash",
+        "field": "password",
+        "hash": "hash",
+        "target": "payload",
+        "outputs": 1,
+        "rounds": 10,
+        "x": 1430,
+        "y": 1900,
+        "wires": [
+            [
+                "6e97e06779e988d5"
+            ]
+        ]
+    },
+    {
+        "id": "6e97e06779e988d5",
+        "type": "function",
+        "z": "092c9fcb141d08fc",
+        "name": "Save User",
+        "func": "let users = global.get(\"users\") || [];\n\n// Combine o usuário com o hash da senha\nconst newUser = {\n    ...msg.newUser,\n    password: msg.payload\n};\n\nusers.push(newUser);\nglobal.set(\"users\", users);\n\n// Remove a senha antes de enviar a resposta\nconst { password, ...userWithoutPassword } = newUser;\nmsg.payload = { success: true, user: userWithoutPassword };\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1620,
+        "y": 1900,
+        "wires": [
+            [
+                "logFunction",
+                "010cbba698727c8f"
+            ]
+        ]
+    },
+    {
+        "id": "010cbba698727c8f",
+        "type": "http response",
+        "z": "092c9fcb141d08fc",
+        "name": "Create User Response",
+        "statusCode": "201",
+        "headers": {},
+        "x": 1820,
+        "y": 1900,
+        "wires": []
+    },
+    {
+        "id": "3163bba066b7251f",
+        "type": "http in",
+        "z": "092c9fcb141d08fc",
+        "name": "Update User",
+        "url": "/users/:uuid",
+        "method": "put",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 1070,
+        "y": 2040,
+        "wires": [
+            [
+                "fe7fd12c0681a165"
+            ]
+        ]
+    },
+    {
+        "id": "01f831d1647c47cd",
+        "type": "function",
+        "z": "092c9fcb141d08fc",
+        "name": "Prepare Update User",
+        "func": "let users = global.get(\"users\") || [];\nlet { uuid } = msg.req.params;\nlet { name, password, isActived, isRoot } = msg.payload;\n\nlet user = users.find(u => u.uuid === uuid);\nif (!user) {\n    msg.statusCode = 404;\n    msg.payload = { error: \"User not found\" };\n    return msg;\n}\n\n// Store update data in msg for later use\nmsg.updateData = {\n    name: name || user.name,\n    isActived: isActived !== undefined ? isActived : user.isActived,\n    isRoot: isRoot !== undefined ? isRoot : user.isRoot,\n    updatedDate: new Date().toISOString()\n};\n\nmsg.userIndex = users.findIndex(u => u.uuid === uuid);\n\n// If password is provided, send to bcrypt node\nif (password) {\n    msg.password = password;\n    return [msg, null];\n}\n\n// If no password update, skip bcrypt\nreturn [null, msg];",
+        "outputs": 2,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1530,
+        "y": 2040,
+        "wires": [
+            [
+                "a44725f5707faa98"
+            ],
+            [
+                "77b2d63da6505e96"
+            ]
+        ]
+    },
+    {
+        "id": "a44725f5707faa98",
+        "type": "bcrypt",
+        "z": "092c9fcb141d08fc",
+        "name": "Hash Password",
+        "action": "hash",
+        "field": "password",
+        "hash": "hash",
+        "target": "hashedPassword",
+        "outputs": 1,
+        "rounds": "10",
+        "x": 1750,
+        "y": 2000,
+        "wires": [
+            [
+                "77b2d63da6505e96"
+            ]
+        ]
+    },
+    {
+        "id": "77b2d63da6505e96",
+        "type": "function",
+        "z": "092c9fcb141d08fc",
+        "name": "Save Updated User",
+        "func": "let users = global.get(\"users\") || [];\n\n// Combine update data with password if it was updated\nconst updatedUser = {\n    ...users[msg.userIndex],\n    ...msg.updateData\n};\n\nif (msg.hashedPassword) {\n    updatedUser.password = msg.hashedPassword;\n}\n\n// Update user in array\nusers[msg.userIndex] = updatedUser;\nglobal.set(\"users\", users);\n\n// Remove password from response\nconst { password, ...userWithoutPassword } = updatedUser;\n\nmsg.statusCode = 200;\nmsg.payload = userWithoutPassword;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1960,
+        "y": 2040,
+        "wires": [
+            [
+                "logFunction",
+                "70f151a1b5ec9353"
+            ]
+        ]
+    },
+    {
+        "id": "70f151a1b5ec9353",
+        "type": "http response",
+        "z": "092c9fcb141d08fc",
+        "name": "Update User Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 2310,
+        "y": 2040,
+        "wires": []
+    },
+    {
+        "id": "logFunction",
+        "type": "function",
+        "z": "092c9fcb141d08fc",
+        "name": "Log Action",
+        "func": "function logAction(userName, routeName, payload) {\n    const log = `[${new Date().toISOString()}][${userName}][${routeName}]: ${JSON.stringify(payload)}`;\n    const logs = global.get('logs') || [];\n    logs.push(log);\n    global.set('logs', logs);\n}\n\n// Get user name from token\nconst userName = msg.token ? msg.token.name : 'anonymous';\nlogAction(userName, msg.req.route.path, msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "x": 2430,
+        "y": 1580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "jwtVerify",
+        "type": "jwt verify",
+        "z": "092c9fcb141d08fc",
+        "name": "Verify Token",
+        "alg": [
+            "HS256"
+        ],
+        "secret": "abimael",
+        "key": "",
+        "signvar": "bearer",
+        "storetoken": "token",
+        "x": 1330,
+        "y": 1580,
+        "wires": [
+            [
+                "updateVehicleFunction"
+            ]
+        ]
+    },
+    {
+        "id": "checkRootUser",
+        "type": "function",
+        "z": "092c9fcb141d08fc",
+        "name": "Check Root User",
+        "func": "if (!msg.token || !msg.token.isRoot) {\n    msg.statusCode = 403;\n    msg.payload = { error: 'Unauthorized: Root access required' };\n    return [null, msg];\n}\n\n// Add user info for logging\nmsg.user = {\n    uuid: msg.token.uuid,\n    name: msg.token.name,\n    isRoot: msg.token.isRoot\n};\n\nreturn [msg, null];",
+        "outputs": 2,
+        "x": 1250,
+        "y": 1840,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "jwtError",
+        "type": "function",
+        "z": "092c9fcb141d08fc",
+        "name": "Handle JWT Error",
+        "func": "msg.statusCode = 401;\nmsg.payload = { error: 'Invalid or expired token' };\nreturn msg;",
+        "outputs": 1,
+        "x": 730,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "33ccf2d96cbf2bf7",
+        "type": "function",
+        "z": "092c9fcb141d08fc",
+        "name": "List Vehicles with Filters",
+        "func": "let vehicles = global.get(\"vehicles\") || [];\n\n// Get query parameters\nconst page = msg.req.query.page || 1;\nconst limit = msg.req.query.limit || 10;\nconst sortBy = msg.req.query.sortBy || 'creationDate';\nconst sortOrder = msg.req.query.sortOrder || 'desc';\nconst search = msg.req.query.search || '';\n\n// Apply search filter if provided\nif (search) {\n    vehicles = vehicles.filter(function(vehicle) {\n        return vehicle.model.modelName.toLowerCase().includes(search.toLowerCase()) ||\n               vehicle.color.colorName.toLowerCase().includes(search.toLowerCase()) ||\n               vehicle.year.toString().includes(search) ||\n               vehicle.creationDate.includes(search);\n    });\n}\n\n// Sort vehicles\nvehicles.sort(function(a, b) {\n    let valueA, valueB;\n    \n    switch(sortBy) {\n        case 'model':\n            valueA = a.model.modelName;\n            valueB = b.model.modelName;\n            break;\n        case 'color':\n            valueA = a.color.colorName;\n            valueB = b.color.colorName;\n            break;\n        case 'year':\n            valueA = a.year;\n            valueB = b.year;\n            break;\n        case 'creationDate':\n        default:\n            valueA = new Date(a.creationDate);\n            valueB = new Date(b.creationDate);\n    }\n    \n    if (sortOrder.toLowerCase() === 'asc') {\n        return valueA > valueB ? 1 : -1;\n    }\n    return valueA < valueB ? 1 : -1;\n});\n\n// Calculate pagination\nconst totalItems = vehicles.length;\nconst totalPages = Math.ceil(totalItems / limit);\nconst currentPage = Math.min(Math.max(1, parseInt(page)), totalPages);\nconst startIndex = (currentPage - 1) * limit;\nconst endIndex = startIndex + parseInt(limit);\n\n// Get paginated results\nconst paginatedVehicles = vehicles.slice(startIndex, endIndex);\n\n// Prepare response\nmsg.payload = {\n    data: paginatedVehicles,\n    pagination: {\n        total: totalItems,\n        totalPages: totalPages,\n        currentPage: currentPage,\n        limit: parseInt(limit),\n        hasNextPage: currentPage < totalPages,\n        hasPrevPage: currentPage > 1\n    },\n    filters: {\n        sortBy: sortBy,\n        sortOrder: sortOrder,\n        search: search\n    }\n};\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 930,
+        "y": 560,
+        "wires": [
+            [
+                "427a423ef5cd331b"
+            ]
+        ]
+    },
+    {
+        "id": "2b53e67f36648f6d",
+        "type": "jwt verify",
+        "z": "092c9fcb141d08fc",
+        "name": "Verify Token",
+        "alg": [
+            "HS256"
+        ],
+        "secret": "abimael",
+        "key": "",
+        "signvar": "bearer",
+        "storetoken": "token",
+        "x": 730,
+        "y": 580,
+        "wires": [
+            [
+                "33ccf2d96cbf2bf7"
+            ]
+        ]
+    },
+    {
+        "id": "aea1d2cb993cf7aa",
+        "type": "jwt verify",
+        "z": "092c9fcb141d08fc",
+        "name": "Verify Token",
+        "alg": [
+            "HS256"
+        ],
+        "secret": "abimael",
+        "key": "",
+        "signvar": "bearer",
+        "storetoken": "token",
+        "x": 1430,
+        "y": 1060,
+        "wires": [
+            [
+                "2d36070cbb36d6fc"
+            ]
+        ]
+    },
+    {
+        "id": "78616f209f20d8bc",
+        "type": "jwt verify",
+        "z": "092c9fcb141d08fc",
+        "name": "Verify Token",
+        "alg": [
+            "HS256"
+        ],
+        "secret": "abimael",
+        "key": "",
+        "signvar": "bearer",
+        "storetoken": "token",
+        "x": 1150,
+        "y": 900,
+        "wires": [
+            [
+                "getModelsFromContext"
+            ]
+        ]
+    },
+    {
+        "id": "b3be3a513c8afc7c",
+        "type": "jwt verify",
+        "z": "092c9fcb141d08fc",
+        "name": "Verify Token",
+        "alg": [
+            "HS256"
+        ],
+        "secret": "abimael",
+        "key": "",
+        "signvar": "bearer",
+        "storetoken": "token",
+        "x": 1130,
+        "y": 820,
+        "wires": [
+            [
+                "getColorsFromContext"
+            ]
+        ]
+    },
+    {
+        "id": "c9efe378a6ea8384",
+        "type": "jwt verify",
+        "z": "092c9fcb141d08fc",
+        "name": "Verify Token",
+        "alg": [
+            "HS256"
+        ],
+        "secret": "abimael",
+        "key": "",
+        "signvar": "bearer",
+        "storetoken": "token",
+        "x": 1590,
+        "y": 1360,
+        "wires": [
+            [
+                "deleteVehicleFunction"
+            ]
+        ]
+    },
+    {
+        "id": "fe7fd12c0681a165",
+        "type": "jwt verify",
+        "z": "092c9fcb141d08fc",
+        "name": "Verify Token",
+        "alg": [
+            "HS256"
+        ],
+        "secret": "abimael",
+        "key": "",
+        "signvar": "bearer",
+        "storetoken": "token",
+        "x": 1270,
+        "y": 2040,
+        "wires": [
+            [
+                "01f831d1647c47cd"
+            ]
+        ]
+    },
+    {
+        "id": "0f3379128610b884",
+        "type": "jwt verify",
+        "z": "092c9fcb141d08fc",
+        "name": "Verify Token",
+        "alg": [
+            "HS256"
+        ],
+        "secret": "abimael",
+        "key": "",
+        "signvar": "bearer",
+        "storetoken": "token",
+        "x": 1190,
+        "y": 1740,
+        "wires": [
+            []
+        ]
+    }
+]
