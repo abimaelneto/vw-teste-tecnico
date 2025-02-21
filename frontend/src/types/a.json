@@ -1,0 +1,92 @@
+[{
+        "id": "getColorsList",
+        "type": "http in",
+        "z": "f2d96272452028ba",
+        "name": "GET Colors",
+        "url": "/colors",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 320,
+        "y": 520,
+        "wires": [["authenticateColorsRequest"]]
+    },
+    {
+        "id": "authenticateColorsRequest",
+        "type": "jwt-validator",
+        "z": "f2d96272452028ba",
+        "name": "",
+        "secret": "abimael",
+        "x": 520,
+        "y": 520,
+        "wires": [["getColorsFromContext"]]
+    },
+    {
+        "id": "getColorsFromContext",
+        "type": "function",
+        "z": "f2d96272452028ba",
+        "name": "Get Colors from Context",
+        "func": "// Obtém as cores do contexto global\nconst colors = global.get('colors');\n\n// Prepara a resposta\nmsg.payload = colors || [];\nmsg.statusCode = 200;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 740,
+        "y": 520,
+        "wires": [["colorsResponse"]]
+    },
+    {
+        "id": "colorsResponse",
+        "type": "http response",
+        "z": "f2d96272452028ba",
+        "name": "Colors Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 940,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "getModelsList",
+        "type": "http in",
+        "z": "f2d96272452028ba",
+        "name": "GET Models",
+        "url": "/models",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 320,
+        "y": 580,
+        "wires": [["authenticateModelsRequest"]]
+    },
+    {
+        "id": "authenticateModelsRequest",
+        "type": "jwt-validator",
+        "z": "f2d96272452028ba",
+        "name": "",
+        "secret": "abimael",
+        "x": 520,
+        "y": 580,
+        "wires": [["getModelsFromContext"]]
+    },
+    {
+        "id": "getModelsFromContext",
+        "type": "function",
+        "z": "f2d96272452028ba",
+        "name": "Get Models from Context",
+        "func": "// Obtém os modelos do contexto global\nconst models = global.get('models');\n\n// Prepara a resposta\nmsg.payload = models || [];\nmsg.statusCode = 200;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 740,
+        "y": 580,
+        "wires": [["modelsResponse"]]
+    },
+    {
+        "id": "modelsResponse",
+        "type": "http response",
+        "z": "f2d96272452028ba",
+        "name": "Models Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 940,
+        "y": 580,
+        "wires": []
+    }]
